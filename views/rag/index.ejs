@@ -1,0 +1,66 @@
+<!--
+ RD4.3 | PART C | RAG QUESTION-ANSWERING VIEW
+
+ LESSON: A form sends the question to Express.
+ LESSON: EJS displays the AI answer and source chunks.
+ SEARCH KEYWORDS: RAG, form, EJS, semantic search
+-->
+
+<h1>Ask Your Product PDF</h1>
+<p>RD4.3 — Vector Embeddings and RAG</p>
+
+<p><a href="/products">Back to products</a></p>
+
+<form method="POST" action="/rag">
+
+  <div class="mb-3">
+    <label class="form-label">Select product</label>
+    <select name="product_id"
+            class="form-select"
+            required>
+      <% products.forEach(product => { %>
+        <option
+          value="<%= product.product_id %>"
+          <%= String(product.product_id) === selectedProduct ? 'selected' : '' %>
+          <%= Number(product.chunk_count) === 0 ? 'disabled' : '' %>>
+          <%= product.name %>
+          (<%= product.chunk_count %> indexed chunks)
+        </option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Your question</label>
+    <textarea name="question"
+              class="form-control"
+              rows="3"
+              maxlength="2000"
+              required><%= question %></textarea>
+  </div>
+
+  <button class="btn btn-primary" type="submit">
+    Ask Gemini
+  </button>
+</form>
+
+<% if (answer !== null) { %>
+  <hr>
+
+  <h2>Gemini Answer</h2>
+  <p style="white-space: pre-wrap"><%= answer %></p>
+
+  <h3>Retrieved PDF Chunks</h3>
+  <p>These are the passages supplied to Gemini.</p>
+
+  <% sources.forEach((source, index) => { %>
+    <details class="mb-3">
+      <summary>
+        Source <%= index + 1 %> —
+        Chunk <%= source.chunk_index %> —
+        Distance <%= Number(source.distance).toFixed(4) %>
+      </summary>
+      <p class="mt-2"><%= source.content %></p>
+    </details>
+  <% }) %>
+<% } %>

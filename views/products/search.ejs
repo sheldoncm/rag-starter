@@ -1,0 +1,38 @@
+<!--
+ RD4.3 | PART D | SEMANTIC SEARCH RESULTS
+ LESSON: Lower cosine distance means greater similarity.
+ SEARCH KEYWORDS: EJS, similarity, vector search
+-->
+
+<h1>Search Results</h1>
+<p>Search: <strong><%= query %></strong></p>
+<p><a href="/products">Back to Products</a></p>
+
+<% if (results.length === 0) { %>
+  <p>No matching indexed PDF content found.</p>
+<% } else { %>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Description</th>
+        <th>Matching PDF Content</th>
+        <th>Relevance</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% results.forEach(result => { %>
+        <tr>
+          <td><%= result.name %></td>
+          <td><%= result.description %></td>
+          <td><%= result.chunk_text.slice(0, 150) %>...</td>
+          <td><%= (1 - Number(result.distance)).toFixed(3) %></td>
+          <td>
+            <a href="/products/<%= result.product_id %>">View</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>

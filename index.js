@@ -2,7 +2,10 @@ const express = require('express');
 const ejs = require('ejs');
 const expressLayouts = require('express-ejs-layouts');
 require('dotenv').config();
-const { createPool } = require('mysql2/promise');
+// RD4.3 | PART A | SHARED DATABASE CONNECTION
+// LESSON: Import a reusable module instead of duplicating configuration.
+// SEARCH KEYWORDS: require, module, connection pool, db.js
+const connection = require('./db');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -12,13 +15,19 @@ app.use(express.urlencoded({ extended: true }));
 
 app.set('layout', 'layouts/base');
 
-const connection = createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT
-});
+// RD4.3 | PART C | SEMANTIC SEARCH AND RAG
+// SEARCH KEYWORDS: RAG, Gemini, vector similarity
+app.use('/rag', require('./ragRouter'));
+
+
+
+// RD4.3 | PART B | PRODUCT ROUTER
+// SEARCH KEYWORDS: Express Router, products, PDF upload
+app.use('/products', require('./productRouter'));
+
+
+
+
 
 app.get('/', (req, res) => {
   res.render('landing')

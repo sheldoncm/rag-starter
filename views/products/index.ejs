@@ -1,0 +1,39 @@
+<!-- RD4.3 | VIEW | PRODUCT LIST -->
+<h1>Products</h1>
+<p><a href="/">Home</a></p>
+
+
+<!-- RD4.3 | PART D | SEARCH PRODUCTS BY PDF CONTENT -->
+<form action="/products/search" method="GET" class="mb-4">
+  <label for="search" class="form-label">Semantic product search</label>
+  <div class="input-group">
+    <input id="search" type="text" name="q"
+           class="form-control"
+           placeholder="Search products by natural language..."
+           required>
+    <button class="btn btn-primary" type="submit">Search</button>
+  </div>
+</form>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Description</th>
+      <th>PDF</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% products.forEach(product => { %>
+      <tr>
+        <td><%= product.name %></td>
+        <td><%= product.description || '' %></td>
+        <td><%= product.original_filename || 'No PDF uploaded' %></td>
+        <td>
+          <a href="/products/<%= product.product_id %>">View</a>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

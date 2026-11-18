@@ -1,0 +1,26 @@
+USE crm;
+
+CREATE TABLE IF NOT EXISTS PDF (
+  pdf_id INT AUTO_INCREMENT PRIMARY KEY,
+  filename VARCHAR(255) NOT NULL,
+  original_filename VARCHAR(255) NOT NULL,
+  filepath TEXT NOT NULL,
+  file_size BIGINT NOT NULL,
+  description TEXT,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE Products
+  ADD COLUMN pdf_id INT NULL,
+  ADD CONSTRAINT fk_products_pdf
+    FOREIGN KEY (pdf_id) REFERENCES PDF(pdf_id);
+
+CREATE TABLE IF NOT EXISTS PDFChunks (
+  chunk_id INT AUTO_INCREMENT PRIMARY KEY,
+  pdf_id INT NOT NULL,
+  chunk_index INT NOT NULL,
+  content TEXT NOT NULL,
+  embedding VECTOR(768) NOT NULL,
+  VECTOR INDEX (embedding) M=8 DISTANCE=cosine,
+  FOREIGN KEY (pdf_id) REFERENCES PDF(pdf_id) ON DELETE CASCADE
+);
