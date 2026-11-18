@@ -1,0 +1,21 @@
+
+<h1>Remove PDF</h1>
+
+<p>Remove the PDF from
+<strong><%= product.name %></strong>?</p>
+
+<p class="text-muted">
+This disconnects the PDF from the product.
+The stored PDF and its embeddings are preserved.
+</p>
+
+<form method="POST"
+      action="/products/<%= product.product_id %>/remove-pdf">
+  <button type="submit" class="btn btn-danger">
+    Confirm Remove PDF
+  </button>
+  <a class="btn btn-secondary"
+     href="/products/<%= product.product_id %>">
+    Cancel
+  </a>
+</form>

@@ -18,6 +18,27 @@
   </a>
 <% } %>
 
+
+<!-- PRODUCT MANAGEMENT ACTIONS -->
+<div class="d-flex gap-2 flex-wrap mt-3">
+  <a class="btn btn-success"
+     href="/products/<%= product.product_id %>/edit">
+    Edit Product
+  </a>
+
+  <% if (product.pdf_id) { %>
+    <a class="btn btn-warning"
+       href="/products/<%= product.product_id %>/remove-pdf">
+      Remove PDF
+    </a>
+  <% } %>
+
+  <a class="btn btn-danger"
+     href="/products/<%= product.product_id %>/delete">
+    Delete Product
+  </a>
+</div>
+
 <p class="mt-3"><a href="/products">Back to products</a></p>
 
 

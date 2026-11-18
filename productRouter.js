@@ -104,6 +104,47 @@ router.get('/search', async (req, res, next) => {
   }
 });
 
+
+// RD4.1 | DETACH PDF FROM PRODUCT
+router.get('/:id/remove-pdf', async (req, res, next) => {
+  try {
+    const id = validId(req.params.id);
+    if (!id) return res.status(400).send('Invalid product ID');
+
+    const [rows] = await db.execute(
+      'SELECT product_id, name, pdf_id FROM Products WHERE product_id = ?',
+      [id]
+    );
+
+    if (!rows.length) return res.status(404).send('Product not found');
+    if (!rows[0].pdf_id) return res.redirect('/products/' + id);
+
+    res.render('products/remove-pdf', { product: rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/:id/remove-pdf', async (req, res, next) => {
+  try {
+    const id = validId(req.params.id);
+    if (!id) return res.status(400).send('Invalid product ID');
+
+    const [result] = await db.execute(
+      'UPDATE Products SET pdf_id = NULL WHERE product_id = ?',
+      [id]
+    );
+
+    if (!result.affectedRows) {
+      return res.status(404).send('Product not found');
+    }
+
+    res.redirect('/products/' + id);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.get('/:id', async (req, res, next) => {
   try {
     const id = validId(req.params.id);
@@ -280,6 +321,144 @@ router.post('/:id/chat', express.json(), async (req, res, next) => {
     const answer = await generateAnswer(question, context);
 
     res.json({ answer });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+// RD4.1 | PRODUCT CRUD ROUTES
+// LESSON: GET displays forms; POST changes MariaDB records.
+
+// CREATE: Display Add Product form.
+router.get('/create', (req, res) => {
+  res.render('products/create');
+});
+
+// CREATE: Insert a new product.
+router.post('/create', async (req, res, next) => {
+  try {
+    const name = String(req.body.name || '').trim();
+    const description = String(req.body.description || '').trim();
+
+    if (!name || name.length > 255) {
+      return res.status(400).send('Enter a valid product name');
+    }
+
+    await db.execute(
+      'INSERT INTO Products (name, description) VALUES (?, ?)',
+      [name, description || null]
+    );
+
+    res.redirect('/products');
+  } catch (error) {
+    next(error);
+  }
+});
+
+// UPDATE: Display Edit Product form.
+router.get('/:id/edit', async (req, res, next) => {
+  try {
+    const id = validId(req.params.id);
+    if (!id) return res.status(400).send('Invalid product ID');
+
+    const [rows] = await db.execute(
+      'SELECT * FROM Products WHERE product_id = ?', [id]
+    );
+
+    if (!rows.length) return res.status(404).send('Product not found');
+
+    res.render('products/edit', { product: rows[0] });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// UPDATE: Save changes to MariaDB.
+router.post('/:id/edit', async (req, res, next) => {
+  try {
+    const id = validId(req.params.id);
+    if (!id) return res.status(400).send('Invalid product ID');
+
+    const name = String(req.body.name || '').trim();
+    const description = String(req.body.description || '').trim();
+
+    if (!name || name.length > 255) {
+      return res.status(400).send('Enter a valid product name');
+    }
+
+    const [result] = await db.execute(
+      'UPDATE Products SET name = ?, description = ? WHERE product_id = ?',
+      [name, description || null, id]
+    );
+
+    if (!result.affectedRows) {
+      return res.status(404).send('Product not found');
+    }
+
+    res.redirect('/products');
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE: Display confirmation and check related records.
+router.get('/:id/delete', async (req, res, next) => {
+  try {
+    const id = validId(req.params.id);
+    if (!id) return res.status(400).send('Invalid product ID');
+
+    const [rows] = await db.execute(
+      'SELECT * FROM Products WHERE product_id = ?', [id]
+    );
+
+    if (!rows.length) return res.status(404).send('Product not found');
+
+    const [customerLinks] = await db.execute(
+      'SELECT COUNT(*) AS total FROM CustomerProduct WHERE product_id = ?', [id]
+    );
+    const [employeeLinks] = await db.execute(
+      'SELECT COUNT(*) AS total FROM EmployeeProduct WHERE product_id = ?', [id]
+    );
+
+    const blocked = Boolean(
+      rows[0].pdf_id ||
+      customerLinks[0].total ||
+      employeeLinks[0].total
+    );
+
+    res.render('products/delete', { product: rows[0], blocked });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE: Remove only products without related records.
+router.post('/:id/delete', async (req, res, next) => {
+  try {
+    const id = validId(req.params.id);
+    if (!id) return res.status(400).send('Invalid product ID');
+
+    const [result] = await db.execute(
+      `DELETE FROM Products
+       WHERE product_id = ?
+       AND pdf_id IS NULL
+       AND NOT EXISTS (
+         SELECT 1 FROM CustomerProduct WHERE product_id = ?
+       )
+       AND NOT EXISTS (
+         SELECT 1 FROM EmployeeProduct WHERE product_id = ?
+       )`,
+      [id, id, id]
+    );
+
+    if (!result.affectedRows) {
+      return res.status(409).send(
+        'Product not found or has related records. Deletion blocked.'
+      );
+    }
+
+    res.redirect('/products');
   } catch (error) {
     next(error);
   }

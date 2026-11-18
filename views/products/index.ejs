@@ -1,5 +1,6 @@
 <!-- RD4.3 | VIEW | PRODUCT LIST -->
 <h1>Products</h1>
+<p><a href="/products/create" class="btn btn-success">+ Add Product</a></p>
 <p><a href="/">Home</a></p>
 
 
@@ -31,7 +32,7 @@
         <td><%= product.description || '' %></td>
         <td><%= product.original_filename || 'No PDF uploaded' %></td>
         <td>
-          <a href="/products/<%= product.product_id %>">View</a>
+          <a href="/products/<%= product.product_id %>" class="btn btn-primary btn-sm">View</a>
         </td>
       </tr>
     <% }) %>

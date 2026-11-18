@@ -1,0 +1,21 @@
+<!-- RD4.1 | DELETE PRODUCT -->
+<h1>Delete Product</h1>
+
+<p>Are you sure you want to delete
+<strong><%= product.name %></strong>?</p>
+
+<% if (blocked) { %>
+  <div class="alert alert-warning">
+    This product has an attached PDF or related customer/employee
+    records. Remove these relationships before deleting.
+  </div>
+  <a href="/products" class="btn btn-secondary">Back</a>
+<% } else { %>
+  <form action="/products/<%= product.product_id %>/delete"
+        method="POST">
+    <button type="submit" class="btn btn-danger">
+      Confirm Delete
+    </button>
+    <a href="/products" class="btn btn-secondary">Cancel</a>
+  </form>
+<% } %>

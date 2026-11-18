@@ -1,0 +1,19 @@
+<!-- RD4.1 | EDIT PRODUCT -->
+<h1>Edit Product</h1>
+
+<form action="/products/<%= product.product_id %>/edit" method="POST">
+  <div class="mb-3">
+    <label class="form-label">Product Name</label>
+    <input type="text" name="name" class="form-control"
+           maxlength="255" value="<%= product.name %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Description</label>
+    <textarea name="description" class="form-control"
+              rows="4"><%= product.description || '' %></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-success">Save Changes</button>
+  <a href="/products" class="btn btn-secondary">Cancel</a>
+</form>
