@@ -29,8 +29,9 @@ app.use('/products', require('./productRouter'));
 
 
 
+// LESSON: RD4.3 home page with navigation to RAG features
 app.get('/', (req, res) => {
-  res.render('landing')
+  res.render('home');
 });
 
 // app.get('/customers', async (req, res) => {
@@ -185,6 +186,8 @@ app.post('/customers/:customer_id/delete', async (req, res) => {
   await connection.execute('DELETE FROM Customers WHERE customer_id = ?', [req.params.customer_id]);
   res.redirect('/customers');
 });
+
+
 
 
 

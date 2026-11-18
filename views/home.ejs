@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAG Starter</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; padding: 40px 20px; }
+    main { max-width: 850px; margin: auto; }
+    h1 { color: #243447; }
+    .card { background: white; padding: 24px; margin: 18px 0; border-radius: 10px; border: 1px solid #ddd; }
+    .card h2 { margin-top: 0; }
+    .button { display: inline-block; background: #2563eb; color: white; padding: 11px 18px; border-radius: 6px; text-decoration: none; }
+    .button:hover { background: #1d4ed8; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>RAG Starter</h1>
+    <p>RD4.3 — Vector Embeddings and Retrieval-Augmented Generation</p>
+
+    <div class="card">
+      <h2>Products</h2>
+      <p>View products, upload PDFs and ask product-specific questions.</p>
+      <a class="button" href="/products">Open Products</a>
+    </div>
+
+    <div class="card">
+      <h2>Semantic Search</h2>
+      <p>Find relevant product information using vector embeddings.</p>
+      <a class="button" href="/products/search?q=retirement">Open Semantic Search</a>
+    </div>
+
+    <div class="card">
+      <h2>RAG Chat</h2>
+      <p>Ask questions using information retrieved from uploaded PDFs.</p>
+      <a class="button" href="/rag">Open RAG Chat</a>
+    </div>
+  </main>
+</body>
+</html>
